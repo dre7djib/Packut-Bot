@@ -21,14 +21,20 @@ async def clear(ctx, amount=10):
 async def pack(ctx):
         for i in range(6): 
           player = readcsv()
+
+          valCrix = float(player[10]) / 100000
+          if valCrix < 1:
+               valCrix = 1
+
           # Créez un embed
           embed = discord.Embed(
-              title = player[6],
+              title = player[5],
               description = player[7],
               color = discord.Color.purple()
           )
           embed.set_image(url="https://cdn.sofifa.net/players/"+str(player[0])[:3]+"/"+str(player[0])[3:]+"/24_240.png",)
           embed.set_thumbnail(url=ctx.author.avatar)
+          embed.set_footer(text=str(round(valCrix)) + " ◊")
           await ctx.channel.send(embed=embed)
 
 
