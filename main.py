@@ -24,29 +24,39 @@ async def clear(ctx, amount=10):
 @client.command(name="pack")
 async def pack(ctx):
         for i in range(6): 
-          player = readcsv()
+            player = readcsv()
+            while db.getPlayerId == True:
+                player = readcsv()
 
-          valCrix = float(player[10]) / 100000
-          if valCrix < 1:
-               valCrix = 1
+            valCrix = float(player[10]) / 100000
+            if valCrix < 1:
+                valCrix = 1
+            
+            playerId = player[0]
+            playerName = player[6]
+            position = player[7]
+            photoLink = "https://cdn.sofifa.net/players/"+str(player[0])[:3]+"/"+str(player[0])[3:]+"/23_240.png"
+            userId = ctx.author.id
 
-          # Créez un embed
-          embed = discord.Embed(
-              title = player[5],
-              description = player[7],
-              color = discord.Color.purple()
-          )
-          embed.set_image(url="https://cdn.sofifa.net/players/"+str(player[0])[:3]+"/"+str(player[0])[3:]+"/23_240.png")
-          embed.set_thumbnail(url=ctx.author.avatar)
-          embed.set_footer(text=str(round(valCrix)) + " ◊")
-          await ctx.channel.send(embed=embed)
+            db.createPlayer(conn,playerId,playerName,round(valCrix),position,photoLink,userId)
+
+            # Créez un embed
+            embed = discord.Embed(
+                title = player[5],
+                description = position,
+                color = discord.Color.purple()
+            )
+            embed.set_image(url=photoLink)
+            embed.set_thumbnail(url=ctx.author.avatar)
+            embed.set_footer(text=str(round(valCrix)) + " ◊")
+            await ctx.channel.send(embed=embed)
 
 
-@client.command(name="start")
+@client.command(name="start") # Init Player 
 async def crix(ctx):
     discordId = ctx.author.id
     discordName = ctx.author.name
-    if db.getUserID(conn,discordId):
+    if db.getUserId(conn,discordId):
         bot_channel = client.get_channel(1167402766352793620)
         await bot_channel.send("Vous avez déjà commencé a jouer!")
         db.createUser(conn, discordName, discordId)

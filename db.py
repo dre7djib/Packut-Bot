@@ -20,7 +20,17 @@ def createUser(conn,name, discordId):
     conn.commit()
     return cur.lastrowid
 
-def getUserID(conn,discordId):
+
+def createPlayer(conn,playerID,playerName,valueCrix,position,photoLink,userId):
+    crix = 500
+    sql = ''' INSERT INTO players (playerID,playerName,valueCrix,position,photoLink,userId)
+              VALUES (?, ?, ?, ?, ?, ?) '''
+    cur = conn.cursor()
+    cur.execute(sql, (playerID,playerName,valueCrix,position,photoLink,userId))
+    conn.commit()
+    return cur.lastrowid
+
+def getUserId(conn,discordId):
     sql = ''' SELECT discordId FROM user WHERE discordId = ? '''
     cur = conn.cursor()
     cur.execute(sql, (discordId,))
@@ -30,5 +40,13 @@ def getUserID(conn,discordId):
     else:
         return True
 
+def getPlayerId(conn,playerID):
+    sql = ''' SELECT playerId FROM players WHERE playerId = ? '''
+    cur = conn.cursor()
+    cur.execute(sql, (playerID,))
+    result = cur.fetchone()
+    if result is None:
+        return False
+    else:
+        return True
 
-db = create_connection("data.db")
