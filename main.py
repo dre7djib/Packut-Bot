@@ -36,7 +36,7 @@ async def pack(ctx):
               description = player[7],
               color = discord.Color.purple()
           )
-          embed.set_image(url="https://cdn.sofifa.net/players/"+str(player[0])[:3]+"/"+str(player[0])[3:]+"/23_240.png",)
+          embed.set_image(url="https://cdn.sofifa.net/players/"+str(player[0])[:3]+"/"+str(player[0])[3:]+"/23_240.png")
           embed.set_thumbnail(url=ctx.author.avatar)
           embed.set_footer(text=str(round(valCrix)) + " ◊")
           await ctx.channel.send(embed=embed)
@@ -46,7 +46,12 @@ async def pack(ctx):
 async def crix(ctx):
     discordId = ctx.author.id
     discordName = ctx.author.name
-    db.createUser(conn, discordName, discordId)
+    if db.getUserID(conn,discordId):
+        bot_channel = client.get_channel(1167402766352793620)
+        await bot_channel.send("Vous avez déjà commencé a jouer!")
+        db.createUser(conn, discordName, discordId)
+
+
   
 # Event
 @client.event
