@@ -11,23 +11,23 @@ def create_connection(db_file):
 
     return conn
 
-def create_user(conn,name, discordId):
+def createUser(conn,name, discordId):
     crix = 500
-    sql = ''' INSERT INTO user({name},{crix},{discordId})
-              VALUES(?,?,?) '''
+    sql = ''' INSERT INTO user (name, crix, discordId)
+              VALUES (?, ?, ?) '''
     cur = conn.cursor()
-    cur.execute(sql, project)
+    cur.execute(sql, (name, crix, discordId))
     conn.commit()
     return cur.lastrowid
 
 def getUserID(conn,discordId):
-    sql = ''' SELECT discordId FROM user WHERE discordId == {discordID} '''
+    sql = ''' SELECT discordId FROM user WHERE discordId = ? '''
     cur = conn.cursor()
-    cur.execute(sql, project)
-    conn.commit()
-    if cur.lastrowid is None:
+    cur.execute(sql, (discordId,))
+    result = cur.fetchone()
+    if result is None:
         return False
-    else: 
+    else:
         return True
 
 

@@ -8,7 +8,7 @@ import db
 with open("config.json", "r") as read_file:
     config = json.load(read_file)
 
-conn = db.create_connection(db.py)
+conn = db.create_connection("data.db")
 
 
 intents = discord.Intents.all()
@@ -43,9 +43,9 @@ async def pack(ctx):
 
 
 @client.command(name="start")
-async def crix(ctx,conn):
-    discordId = member.id
-    discordName = member.name
+async def crix(ctx):
+    discordId = ctx.author.id
+    discordName = ctx.author.name
     db.createUser(conn, discordName, discordId)
   
 # Event
