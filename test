@@ -1,0 +1,6 @@
+    dataUser = {
+      "id":member.id,
+      "crix": 500
+    }
+    with open("dataUser.json", "w") as outfile:
+      json.dump(dataUser, outfile)
