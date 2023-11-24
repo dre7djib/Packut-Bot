@@ -23,7 +23,7 @@ client = commands.Bot(command_prefix=config['prefix'], intents = intents)
 
 # Command
 @client.command(name="delete")
-async def clear(ctx, amount=10):
+async def clear(ctx, amount=30):
 	await ctx.channel.purge(limit=amount)
 
 @client.command(name="pack")
@@ -73,6 +73,24 @@ async def crix(ctx):
         await bot_channel.send("You already start playing")
     else:
         db.createUser(conn, discordName, discordId)
+
+@client.command(name="team") # Sell Player
+async def team(ctx,  userName : discord.Member):
+    discordId = userName.id
+    players = db.getAllPlayers(conn,discordId)
+    for name in players:
+        print(name)
+
+    
+    embed = discord.Embed(
+    title = "Team of {userName}",
+    color = discord.Color.purple()
+    )
+    for name in players:
+        embed.add_field(name=name, value='')
+    embed.set_thumbnail(url=ctx.author.avatar)
+    await ctx.channel.send(embed=embed)
+    
 
 
 # Event
