@@ -74,16 +74,14 @@ async def crix(ctx):
     else:
         db.createUser(conn, discordName, discordId)
 
-@client.command(name="team") # Sell Player
+@client.command(name="team") # Show player of a user
 async def team(ctx,  userName : discord.Member):
     discordId = userName.id
     players = db.getAllPlayers(conn,discordId)
-    for name in players:
-        print(name)
-
+    userName = str(userName)
     
     embed = discord.Embed(
-    title = "Team of {userName}",
+    title = "Team of "+ userName,
     color = discord.Color.purple()
     )
     for name in players:
@@ -91,6 +89,10 @@ async def team(ctx,  userName : discord.Member):
     embed.set_thumbnail(url=ctx.author.avatar)
     await ctx.channel.send(embed=embed)
     
+@client.command(name="sell") # Sell a player to another user
+async def sell(ctx, userName : discord.Member, playerName : str):
+    player = db.getPlayerByName(conn, playerName)
+    print(player)
 
 
 # Event
