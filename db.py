@@ -57,12 +57,12 @@ def getAllPlayers(conn,userId):
     result = cur.fetchall()
     return [row[0] for row in result]
 
-def getPlayerByName(conn,playerName):
-    sql = ''' SELECT playerId, userId FROM players WHERE playerName = ? '''
+def getUserIdByPlayerName(conn,playerName):
+    sql = ''' SELECT userId FROM players WHERE playerName == ? '''
     cur = conn.cursor()
     cur.execute(sql,(playerName,))
     result = cur.fetchone()
-    return cur.lastrowid
+    return result
 
 # Crix
 def getCrix(conn,discordId):

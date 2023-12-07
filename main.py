@@ -45,7 +45,7 @@ async def pack(ctx):
                     valCrix = 1
                 
                 playerId = player[0]
-                playerName = player[6]
+                playerName = player[5]
                 position = player[7]
                 photoLink = "https://cdn.sofifa.net/players/"+str(player[0])[:3]+"/"+str(player[0])[3:]+"/23_240.png"
                 userId = ctx.author.id
@@ -90,9 +90,13 @@ async def team(ctx,  userName : discord.Member):
     await ctx.channel.send(embed=embed)
     
 @client.command(name="sell") # Sell a player to another user
-async def sell(ctx, userName : discord.Member, playerName : str):
-    player = db.getPlayerByName(conn, playerName)
-    print(player)
+async def sell(ctx, userName : discord.Member, *playerName):
+    discordId = userName.id
+    name = ' '.join(playerName)
+    userId = db.getUserIdByPlayerName(conn, name)
+    if discordId != userId:
+        return "You can't sell that player because it's not yours"
+
 
 
 # Event
