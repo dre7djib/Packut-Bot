@@ -22,6 +22,47 @@ intents = discord.Intents.all()
 client = commands.Bot(command_prefix=config['prefix'], intents = intents)
 
 
+# Bot
+@client.event
+async def on_guild_join(guild):
+    # Création d'un channel textuel pour les règles et les commandes
+    channelRules = "Rules and Commands"
+    channelPlay = "Play FutPack"
+    category_name = "FutPack"  # Vous pouvez personnaliser le nom de la catégorie
+
+    # Vérifier si la catégorie existe, sinon la créer
+    category = discord.utils.get(guild.categories, name=category_name)
+    if category is None:
+        category = await guild.create_category(category_name)
+
+    # Vérifier si le channel existe, sinon le créer
+    existing_channel = discord.utils.get(guild.channels, name=channelRules, category=category)
+    if existing_channel is None:
+        channel = await category.create_text_channel(channelRules)
+        
+
+        embed=discord.Embed(title="Welcome on the server, Here is the rules and commands to play FutPack", description="First of all, FutPack is a game where you can open packs with credits name crix, at the beginning you are given 500 crix. The main goal is to have the best team possible compare to your friend.", color=0x9929bd)
+        embed.set_author(name="dre7djib", url="https://github.com/dre7djib")
+        embed.add_field(name="&start", value="Command to start your game with the Bot", inline=False)
+        embed.add_field(name="&pack", value="Command to open pack. Each pack cost 100 crix and you get 6 players in. May the luck will be with you ", inline=False)
+        embed.add_field(name="&fut", value="Every 30min, you can use this commands to get 50 crix ", inline=False)
+        embed.add_field(name="&crix", value="Command to see how much crix you have", inline=False)
+        embed.add_field(name="&sell", value="Command to sell one of your player. In exchange you gain the value of the player you sold", inline=False)
+        embed.add_field(name="&player", value="Command to see the card of a player with his value, photo, and description", inline=False)
+        embed.add_field(name="&giveP", value="Command to give to another player one of your card", inline=False)
+        embed.add_field(name="&giveC", value="Command to give to another player a certain amount of your crix", inline=True)
+        await channel.send(embed=embed)
+        
+        await channel.set_permissions(client.user, send_messages=True, read_messages=True)
+        await channel.set_permissions(guild.default_role, send_messages=False)  # Désactive les messages pour les autres membres
+    
+    existing_channel = discord.utils.get(guild.channels, name=channelPlay, category=category)
+    if existing_channel is None:
+        channel = await category.create_text_channel(channelPlay)
+
+
+
+
 
 # Command
 @client.command(name="delete")
@@ -64,7 +105,6 @@ async def pack(ctx):
                 embed.set_thumbnail(url=ctx.author.avatar)
                 embed.set_footer(text=str(round(valCrix)) + " ◊")
                 await ctx.channel.send(embed=embed)
-
 
 @client.command(name="start") # Init Player 
 async def crix(ctx):
