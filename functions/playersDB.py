@@ -20,6 +20,13 @@ def getPlayerId(conn,playerID):
     else:
         return True
 
+def getPlayerIdByName(conn,playerName):
+    sql = ''' SELECT playerId FROM players WHERE playerName = ? '''
+    cur = conn.cursor()
+    cur.execute(sql, (playerName,))
+    result = cur.fetchone()
+    return result[0]
+
 def getAllPlayers(conn,userId):
     sql = ''' SELECT playerName FROM players WHERE userId = ? '''
     cur = conn.cursor()
@@ -32,18 +39,21 @@ def getUserIdByPlayerName(conn,playerName):
     cur = conn.cursor()
     cur.execute(sql,(playerName,))
     result = cur.fetchone()
-    return result
+    if result is None:
+        return False
+    else:
+        return result
 
 def getValueCrix(conn,playerName):
     sql = ''' SELECT valueCrix FROM players WHERE playerName = ? '''
     cur = conn.cursor()
     cur.execute(sql,(playerName,))
     result = cur.fetchone()
-    return result
+    return result[0]
 
-def removePlayer(conn,playerName):
-    sql = ''' DELETE FROM players WHERE playerName = ? '''
+def removePlayer(conn,playerID):
+    sql = ''' DELETE FROM players WHERE playerID = ? '''
     cur = conn.cursor()
-    cur.execute(sql,(playerName,))
-    cur.commit()
+    cur.execute(sql,(playerID,))
+    conn.commit()
     return

@@ -1,7 +1,9 @@
 import discord
 import json
 import csv
-import db
+import functions.playersDB as playerDB
+import functions.userDB as userDB
+import functions.db as db
 from discord.ext.commands import cooldown, BucketType
 from read_csv import readcsv
 from discord.ext import commands
@@ -29,15 +31,15 @@ async def clear(ctx, amount=30):
 @client.command(name="pack")
 @commands.cooldown(1, 30, commands.BucketType.user) # Get 6 random players in your team
 async def pack(ctx):
-        userCrix = int(db.getCrix(conn,ctx.author.id))
+        userCrix = int(userDB.getCrix(conn,ctx.author.id))
         if userCrix == 0:
             return "Can't open a pack because you are out of crix"
         else:
             rmCrix = userCrix - 100
-            str(db.setCrix(conn,rmCrix,ctx.author.id))
+            str(userDB.setCrix(conn,rmCrix,ctx.author.id))
             for i in range(6): 
                 player = readcsv(m_players)
-                while db.getPlayerId == True:
+                while playerDB.getPlayerId == True:
                     player = readcsv(m_players)
 
                 valCrix = float(player[10]) / 100000
@@ -50,7 +52,7 @@ async def pack(ctx):
                 photoLink = "https://cdn.sofifa.net/players/"+str(player[0])[:3]+"/"+str(player[0])[3:]+"/23_240.png"
                 userId = ctx.author.id
 
-                db.createPlayer(conn,playerId,playerName,round(valCrix),position,photoLink,userId)
+                playerDB.createPlayer(conn,playerId,playerName,round(valCrix),position,photoLink,userId)
 
                 # Créez un embed
                 embed = discord.Embed(
@@ -68,16 +70,16 @@ async def pack(ctx):
 async def crix(ctx):
     discordId = ctx.author.id
     discordName = ctx.author.name
-    if db.getUserId(conn,discordId):
+    if userDB.getUserId(conn,discordId):
         bot_channel = client.get_channel(1167402766352793620)
         await bot_channel.send("You already start playing")
     else:
-        db.createUser(conn, discordName, discordId)
+        userDB.createUser(conn, discordName, discordId)
 
 @client.command(name="team") # Show player of a user
 async def team(ctx,  userName : discord.Member):
     discordId = userName.id
-    players = db.getAllPlayers(conn,discordId)
+    players = playerDB.getAllPlayers(conn,discordId)
     userName = str(userName)
     
     embed = discord.Embed(
@@ -93,9 +95,18 @@ async def team(ctx,  userName : discord.Member):
 async def sell(ctx, userName : discord.Member, *playerName):
     discordId = userName.id
     name = ' '.join(playerName)
-    userId = db.getUserIdByPlayerName(conn, name)
-    if discordId != userId:
-        return "You can't sell that player because it's not yours"
+    userId = playerDB.getUserIdByPlayerName(conn, name)
+    if userId == False or discordId != userId[0]:
+        em = discord.Embed(title="You can't sell that player because it's not yours", color=discord.Color.red())
+        await ctx.send(embed=em)
+    else:
+        valueCrix = playerDB.getValueCrix(conn,name)
+        crix = valueCrix + userDB.getCrix(conn, discordId)
+        userDB.setCrix(conn,crix, discordId)
+        playerId = playerDB.getPlayerIdByName(conn,name)
+        playerDB.removePlayer(conn,playerId)
+        em = discord.Embed(title=f"You sold {name} for {valueCrix}",description=f"You now have {crix} crix", color=discord.Color.green())
+        await ctx.send(embed=em)
 
 
 
@@ -113,7 +124,7 @@ async def on_member_join(member):
 @pack.error
 async def pack_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
-        em = discord.Embed(title=f"You have done too much command",description=f"Try again in {error.retry_after:.2f}s.", color=discord.Color.purple())
+        em = discord.Embed(title=f"You have done too much command",description=f"Try again in {error.retry_after:.2f}s.", color=discord.Color.red())
         await ctx.send(embed=em)
 
 
