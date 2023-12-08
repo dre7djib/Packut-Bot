@@ -4,8 +4,10 @@ import csv
 import functions.playersDB as playerDB
 import functions.userDB as userDB
 import functions.db as db
+import functions.playersViewDB as playersViewDB
 from discord.ext.commands import cooldown, BucketType
 from read_csv import readcsv
+from read_csv import insertCSV
 from discord.ext import commands
 
 # Import Token and Prefix
@@ -25,17 +27,16 @@ client = commands.Bot(command_prefix=config['prefix'], intents = intents)
 # Bot
 @client.event
 async def on_guild_join(guild):
-    # Création d'un channel textuel pour les règles et les commandes
+    insertCSV(conn,"archive/male_players.csv")
+
     channelRules = "Rules and Commands"
     channelPlay = "Play FutPack"
-    category_name = "FutPack"  # Vous pouvez personnaliser le nom de la catégorie
+    category_name = "FutPack"  
 
-    # Vérifier si la catégorie existe, sinon la créer
     category = discord.utils.get(guild.categories, name=category_name)
     if category is None:
         category = await guild.create_category(category_name)
 
-    # Vérifier si le channel existe, sinon le créer
     existing_channel = discord.utils.get(guild.channels, name=channelRules, category=category)
     if existing_channel is None:
         channel = await category.create_text_channel(channelRules)
@@ -78,7 +79,7 @@ async def pack(ctx):
         else:
             rmCrix = userCrix - 100
             str(userDB.setCrix(conn,rmCrix,ctx.author.id))
-            for i in range(6): 
+            for i in range(10): 
                 player = readcsv(m_players)
                 while playerDB.getPlayerId == True:
                     player = readcsv(m_players)
@@ -90,6 +91,7 @@ async def pack(ctx):
                 playerId = player[0]
                 playerName = player[5]
                 position = player[7]
+                version = int(player[2])
                 photoLink = "https://cdn.sofifa.net/players/"+str(player[0])[:3]+"/"+str(player[0])[3:]+"/23_240.png"
                 userId = ctx.author.id
 
@@ -103,7 +105,7 @@ async def pack(ctx):
                 )
                 embed.set_image(url=photoLink)
                 embed.set_thumbnail(url=ctx.author.avatar)
-                embed.set_footer(text=str(round(valCrix)) + " ◊")
+                embed.set_footer(text=str(round(valCrix)) + " ◊" + "    ------------------ FIFA " + version)
                 await ctx.channel.send(embed=embed)
 
 @client.command(name="start") # Init Player 
@@ -147,6 +149,26 @@ async def sell(ctx, userName : discord.Member, *playerName):
         playerDB.removePlayer(conn,playerId)
         em = discord.Embed(title=f"You sold {name} for {valueCrix}",description=f"You now have {crix} crix", color=discord.Color.green())
         await ctx.send(embed=em)
+
+@client.command(name="player")
+async def player(ctx, *playerName):
+    name = ' '.join(playerName)
+    players = playersViewDB.getPlayersByName(conn, name)
+    
+    for player in players:
+        photoLink = "https://cdn.sofifa.net/players/" + str(player[0])[:3] + "/" + str(player[0])[3:] + "/23_240.png"
+        valCrix = float(player[10]) / 100000
+        if valCrix < 1:
+            valCrix = 1
+        embed = discord.Embed(
+            title=player[5],
+            description=player[7],
+            color=discord.Color.purple()
+        )
+        embed.set_image(url=photoLink)
+        embed.set_footer(text=str(round(valCrix)) + " ◊" + "    ------------------ FIFA " + player[2])
+        await ctx.channel.send(embed=embed)
+
 
 
 
