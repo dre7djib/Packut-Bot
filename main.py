@@ -26,12 +26,12 @@ client = commands.Bot(command_prefix=config['prefix'], intents = intents)
 
 # Bot
 @client.event
-async def on_guild_join(guild):
+async def on_guild_join(guild):  # When Bot Added, it create a category with 2 text channel for the Bot
     insertCSV(conn,"archive/male_players.csv")
 
-    channelRules = "Rules and Commands"
-    channelPlay = "Play FutPack"
-    category_name = "FutPack"  
+    channelRules = "Rules and Commands" # Channel Rules 
+    channelPlay = "Play FutPack" # Channel Play
+    category_name = "FutPack"  # Category
 
     category = discord.utils.get(guild.categories, name=category_name)
     if category is None:
@@ -165,8 +165,9 @@ async def player(ctx, *playerName):
             description=player[7],
             color=discord.Color.purple()
         )
+        embed.add_field(name="FIFA " + player[2],value="",inline=True)
         embed.set_image(url=photoLink)
-        embed.set_footer(text=str(round(valCrix)) + " ◊" + "    ------------------ FIFA " + player[2])
+        embed.set_footer(text=str(round(valCrix)) + " ◊")
         await ctx.channel.send(embed=embed)
 
 
