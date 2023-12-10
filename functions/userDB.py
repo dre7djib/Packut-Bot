@@ -20,6 +20,16 @@ def getUserId(conn,discordId):
     else:
         return True
 
+def getUserNameById(conn,discordId):
+    sql = ''' SELECT name FROM user WHERE discordId = ? '''
+    cur = conn.cursor()
+    cur.execute(sql, (discordId,))
+    result = cur.fetchone()
+    if result is None:
+        return False
+    else:
+        return result
+
 # Crix
 def getCrix(conn,discordId):
     sql = ''' SELECT crix FROM user WHERE discordId = ? '''

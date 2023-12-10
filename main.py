@@ -154,7 +154,13 @@ async def sell(ctx, userName : discord.Member, *playerName):
 async def player(ctx, *playerName):
     name = ' '.join(playerName)
     players = playersViewDB.getPlayersByName(conn, name)
-    
+    userDiscord = list(playerDB.getUserIdByPlayerName(conn,name))
+    userName = ""
+    if userDiscord != False:
+        userName = list(userDB.getUserNameById(conn,userDiscord[0]))
+
+
+
     for player in players:
         photoLink = "https://cdn.sofifa.net/players/" + str(player[0])[:3] + "/" + str(player[0])[3:] + "/23_240.png"
         valCrix = float(player[10]) / 100000
@@ -165,6 +171,7 @@ async def player(ctx, *playerName):
             description=player[7],
             color=discord.Color.purple()
         )
+        embed.add_field(name=userName[0],value="",inline=True)
         embed.add_field(name="FIFA " + player[2],value="",inline=True)
         embed.set_image(url=photoLink)
         embed.set_footer(text=str(round(valCrix)) + " ◊")
