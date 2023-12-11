@@ -18,7 +18,7 @@ file = open("archive/male_players.csv", "r")
 m_players = list(csv.reader(file, delimiter=","))
 file.close()
 
-conn = db.create_connection("data.db")
+conn = db.create_connection("data.db") # Create connection between db and code
 
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix=config['prefix'], intents = intents)
@@ -66,11 +66,11 @@ async def on_guild_join(guild):  # When Bot Added, it create a category with 2 t
 
 
 # Command
-@client.command(name="delete")
+@client.command(name="delete") # Temp Command to delete message in channel
 async def clear(ctx, amount=30):
 	await ctx.channel.purge(limit=amount)
 
-@client.command(name="pack")
+@client.command(name="pack") # Pack players to get them in your team
 @commands.cooldown(1, 30, commands.BucketType.user) # Get 6 random players in your team
 async def pack(ctx):
         userCrix = int(userDB.getCrix(conn,ctx.author.id))
@@ -150,7 +150,7 @@ async def sell(ctx, userName : discord.Member, *playerName):
         em = discord.Embed(title=f"You sold {name} for {valueCrix}",description=f"You now have {crix} crix", color=discord.Color.green())
         await ctx.send(embed=em)
 
-@client.command(name="player")
+@client.command(name="player") # Show a specific player  
 async def player(ctx, *playerName):
     name = ' '.join(playerName)
     players = playersViewDB.getPlayersByName(conn, name)
@@ -182,17 +182,17 @@ async def player(ctx, *playerName):
 
 # Event
 @client.event
-async def on_ready():
+async def on_ready(): # Send message in terminal
     print("Bot ready!")
 
 @client.event
-async def on_member_join(member):
+async def on_member_join(member):  # Welcome User in the Server
     general_channel = client.get_channel(1167794216248823818)
     await general_channel.send("Bienvenue sur le serveur ! "+ member.name)
 
 # Error
 @pack.error
-async def pack_error(ctx, error):
+async def pack_error(ctx, error): # Cooldown for Command pack
     if isinstance(error, commands.CommandOnCooldown):
         em = discord.Embed(title=f"You have done too much command",description=f"Try again in {error.retry_after:.2f}s.", color=discord.Color.red())
         await ctx.send(embed=em)
