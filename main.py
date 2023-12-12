@@ -80,7 +80,7 @@ async def pack(ctx):
         rmCrix = userCrix - 0
         str(userDB.setCrix(conn,rmCrix,ctx.author.id))
         for i in range(2): 
-
+            userId = ctx.author.id
             res = True
             while res:
                 player = readcsv(m_players)
@@ -94,12 +94,16 @@ async def pack(ctx):
             if valCrix < 1:
                 valCrix = 1
             
+            PlayerUserId = playerDB.getUserIdByPlayerId(conn,playerId)
+            userName = userDB.getUserNameById(conn,PlayerUserId)
+            if userName == False:
+                userName = " "
+
             playerName = player[5]
             position = player[7]
             version = player[2]
             photoLink = "https://cdn.sofifa.net/players/"+str(player[0])[:3]+"/"+str(player[0])[3:]+"/23_240.png"
-            userId = ctx.author.id
-
+            
             playerDB.createPlayer(conn,playerId,playerName,round(valCrix),position,photoLink,userId)
 
             # Créez un embed
@@ -108,6 +112,7 @@ async def pack(ctx):
                 description = position,
                 color = discord.Color.purple()
             )
+            embed.add_field(name=userName,value=" ")
             embed.set_image(url=photoLink)
             embed.set_thumbnail(url=ctx.author.avatar)
             embed.set_footer(text=str(round(valCrix)) + " ◊" + " FIFA " + version)
