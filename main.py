@@ -74,39 +74,44 @@ async def clear(ctx, amount=30):
 @commands.cooldown(1, 30, commands.BucketType.user) # Get 6 random players in your team
 async def pack(ctx):
         userCrix = int(userDB.getCrix(conn,ctx.author.id))
-        if userCrix == 0:
-            return "Can't open a pack because you are out of crix"
-        else:
-            rmCrix = userCrix - 100
-            str(userDB.setCrix(conn,rmCrix,ctx.author.id))
-            for i in range(10): 
+        if userCrix < 100:
+            return await ctx.send("Can't open a pack because you are out of crix")
+
+        rmCrix = userCrix - 0
+        str(userDB.setCrix(conn,rmCrix,ctx.author.id))
+        for i in range(2): 
+
+            res = True
+            while res:
                 player = readcsv(m_players)
-                while playerDB.getPlayerId == True:
-                    player = readcsv(m_players)
-
-                valCrix = float(player[10]) / 100000
-                if valCrix < 1:
-                    valCrix = 1
+                playerId = str(player[0])
+                getPlayerId = playerDB.getPlayerId(conn, playerId)
                 
-                playerId = player[0]
-                playerName = player[5]
-                position = player[7]
-                version = int(player[2])
-                photoLink = "https://cdn.sofifa.net/players/"+str(player[0])[:3]+"/"+str(player[0])[3:]+"/23_240.png"
-                userId = ctx.author.id
+                if not getPlayerId:
+                    res = False
 
-                playerDB.createPlayer(conn,playerId,playerName,round(valCrix),position,photoLink,userId)
+            valCrix = float(player[10]) / 100000
+            if valCrix < 1:
+                valCrix = 1
+            
+            playerName = player[5]
+            position = player[7]
+            version = player[2]
+            photoLink = "https://cdn.sofifa.net/players/"+str(player[0])[:3]+"/"+str(player[0])[3:]+"/23_240.png"
+            userId = ctx.author.id
 
-                # Créez un embed
-                embed = discord.Embed(
-                    title = player[5],
-                    description = position,
-                    color = discord.Color.purple()
-                )
-                embed.set_image(url=photoLink)
-                embed.set_thumbnail(url=ctx.author.avatar)
-                embed.set_footer(text=str(round(valCrix)) + " ◊" + "    ------------------ FIFA " + version)
-                await ctx.channel.send(embed=embed)
+            playerDB.createPlayer(conn,playerId,playerName,round(valCrix),position,photoLink,userId)
+
+            # Créez un embed
+            embed = discord.Embed(
+                title = player[5],
+                description = position,
+                color = discord.Color.purple()
+            )
+            embed.set_image(url=photoLink)
+            embed.set_thumbnail(url=ctx.author.avatar)
+            embed.set_footer(text=str(round(valCrix)) + " ◊" + " FIFA " + version)
+            await ctx.channel.send(embed=embed)
 
 @client.command(name="start") # Init Player 
 async def crix(ctx):

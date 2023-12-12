@@ -11,7 +11,7 @@ def createPlayer(conn,playerID,playerName,valueCrix,position,photoLink,userId):
     return cur.lastrowid
 
 def getPlayerId(conn,playerID):
-    sql = ''' SELECT playerId FROM players WHERE playerId = ? '''
+    sql = ''' SELECT playerID FROM players WHERE playerID = ? '''
     cur = conn.cursor()
     cur.execute(sql, (playerID,))
     result = cur.fetchone()
@@ -41,6 +41,16 @@ def getUserIdByPlayerName(conn,playerName):
     result = cur.fetchone()
     if result is None:
         return "0"
+    else:
+        return result
+
+def getUserIdByPlayerId(conn,playerId):
+    sql = ''' SELECT userId FROM players WHERE playerID = ? '''
+    cur = conn.cursor()
+    cur.execute(sql,(playerId,))
+    result = cur.fetchone()
+    if result is None:
+        return False
     else:
         return result
 
