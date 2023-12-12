@@ -40,7 +40,7 @@ def getUserIdByPlayerName(conn,playerName):
     cur.execute(sql,(playerName,))
     result = cur.fetchone()
     if result is None:
-        return False
+        return "0"
     else:
         return result
 

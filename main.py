@@ -155,8 +155,9 @@ async def player(ctx, *playerName):
     name = ' '.join(playerName)
     players = playersViewDB.getPlayersByName(conn, name)
     userDiscord = list(playerDB.getUserIdByPlayerName(conn,name))
-    userName = ""
-    if userDiscord != False:
+    print(userDiscord)
+    userName = ["None"]
+    if userDiscord[0] != "0":
         userName = list(userDB.getUserNameById(conn,userDiscord[0]))
 
 
