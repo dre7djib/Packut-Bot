@@ -43,4 +43,5 @@ def setCrix(conn,crix,discordId):
     cur = conn.cursor()
     cur.execute(sql, (crix,discordId))
     result = cur.fetchone()
+    conn.commit()
     return cur.lastrowid
