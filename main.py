@@ -192,7 +192,7 @@ async def player(ctx, *playerName):
         await ctx.channel.send(embed=embed)
 
 @client.command(name="fut")
-@commands.cooldown(1, 30*2, commands.BucketType.user)
+@commands.cooldown(1, 30*60, commands.BucketType.user)
 async def fut(ctx):
     userCrix = int(userDB.getCrix(conn,ctx.author.id))
     print(userCrix)
@@ -205,7 +205,8 @@ async def fut(ctx):
     if nbCrix > 80:
         em = discord.Embed(title=f"WOW, you won {nbCrix} crix",description=" ", color=discord.Color.green())
 
-    em = discord.Embed(title=f"You won {nbCrix} crix",description=" ", color=discord.Color.green())
+    else:
+        em = discord.Embed(title=f"You won {nbCrix} crix",description=" ", color=discord.Color.green())
     await ctx.send(embed=em)
     
 
@@ -220,6 +221,8 @@ async def on_ready(): # Send message in terminal
 async def on_member_join(member):  # Welcome User in the Server
     general_channel = client.get_channel(1167794216248823818)
     await general_channel.send("Bienvenue sur le serveur ! "+ member.name)
+
+
 
 # Error
 @pack.error
