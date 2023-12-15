@@ -1,6 +1,7 @@
 import discord
 import json
 import csv
+import random
 import functions.playersDB as playerDB
 import functions.userDB as userDB
 import functions.db as db
@@ -21,7 +22,7 @@ file.close()
 conn = db.create_connection("data.db") # Create connection between db and code
 
 intents = discord.Intents.all()
-client = commands.Bot(command_prefix=config['prefix'], intents = intents)
+client = commands.Bot(command_prefix=config['prefix'], intents = intents, help_command=None)
 
 
 # Bot
@@ -79,7 +80,7 @@ async def pack(ctx):
 
         rmCrix = userCrix - 0
         str(userDB.setCrix(conn,rmCrix,ctx.author.id))
-        for i in range(2): 
+        for i in range(6): 
             userId = ctx.author.id
             res = True
             while res:
@@ -188,6 +189,25 @@ async def player(ctx, *playerName):
         embed.set_footer(text=str(round(valCrix)) + " ◊")
         await ctx.channel.send(embed=embed)
 
+@client.command(name="fut")
+@commands.cooldown(1, 30*2, commands.BucketType.user)
+async def fut(ctx):
+    nbCrix = random.randint(30,120)
+    await ctx.send("Help 1")
+    getCrix = userDB.getCrix(conn,ctx.author.id)
+    await ctx.send("Help 2")
+    addCrix = nbCrix + getCrix
+    await ctx.send("Help 3")
+    userDB.setCrix(conn,addCrix,ctx.author.id)
+    await ctx.send("Help 4")
+    if nbCrix > 80:
+        await ctx.send("Help 5")
+        em = discord.Embed(title=f"WOW, you won {nbCrix} crix",description=" ", color=discord.Color.green())
+
+    await ctx.send("Help 6")
+    em = discord.Embed(title=f"You won {nbCrix} crix",description=" ", color=discord.Color.green())
+    await ctx.send(embed=em)
+    
 
 
 
@@ -206,6 +226,12 @@ async def on_member_join(member):  # Welcome User in the Server
 async def pack_error(ctx, error): # Cooldown for Command pack
     if isinstance(error, commands.CommandOnCooldown):
         em = discord.Embed(title=f"You have done too much command",description=f"Try again in {error.retry_after:.2f}s.", color=discord.Color.red())
+        await ctx.send(embed=em)
+
+@fut.error
+async def fut_error(ctx,error):
+    if isinstance(error,commands.CommandOnCooldown):
+        em = discord.Embed(title=f"You can't do more than 1 command every 30min",description=f"Try again in {error.retry_after:.2f}s.", color=discord.Color.red())
         await ctx.send(embed=em)
 
 
