@@ -209,6 +209,17 @@ async def crix(ctx):
     em = discord.Embed(title=f"You have {nbCrix} crix",description=" ", color=discord.Color.purple())
     await ctx.send(embed=em)
 
+@client.command(name="giveP")
+async def giveP(ctx,userName : discord.Member, *playerName):
+    name = ' '.join(playerName)
+    userId = playerDB.getUserIdByPlayerName(conn, name)
+    userId = userId[0]
+    print(str(userId))
+    playerId = str(playerDB.getPlayerIdByName(conn, name))
+    print(playerId)
+    playerDB.setUserId(conn,playerId,str(userId))
+    
+
 
 # Event
 @client.event

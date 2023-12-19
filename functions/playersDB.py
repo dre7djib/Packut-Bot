@@ -54,6 +54,14 @@ def getUserIdByPlayerId(conn,playerId):
     else:
         return result
 
+def setUserId(conn,playerId,userId):
+    sql = ''' UPDATE players SET userId = ? WHERE playerID = ? '''
+    cur = conn.cursor()
+    cur.execute(sql,(userId,playerId,))
+    result = cur.fetchone
+    conn.commit
+    return cur.lastrowid
+
 def getValueCrix(conn,playerName):
     sql = ''' SELECT valueCrix FROM players WHERE playerName = ? '''
     cur = conn.cursor()
