@@ -75,12 +75,10 @@ async def clear(ctx, amount=30):
 @commands.cooldown(1, 30, commands.BucketType.user) # Get 6 random players in your team
 async def pack(ctx):
         userCrix = int(userDB.getCrix(conn,ctx.author.id))
-        print(userCrix)
         if userCrix < 100:
             return await ctx.send("Can't open a pack because you don't have enough crix")
 
         rmCrix = userCrix - 100
-        print(rmCrix)
         str(userDB.setCrix(conn,rmCrix,ctx.author.id))
         for i in range(6): 
             userId = ctx.author.id
@@ -126,8 +124,7 @@ async def crix(ctx):
     discordId = ctx.author.id
     discordName = ctx.author.name
     if userDB.getUserId(conn,discordId):
-        bot_channel = client.get_channel(1167402766352793620)
-        await bot_channel.send("You already start playing")
+        await ctx.channel.send("You already start playing")
     else:
         userDB.createUser(conn, discordName, discordId)
 
@@ -168,7 +165,6 @@ async def player(ctx, *playerName):
     name = ' '.join(playerName)
     players = playersViewDB.getPlayersByName(conn, name)
     userDiscord = list(playerDB.getUserIdByPlayerName(conn,name))
-    print(userDiscord)
     userName = ["None"]
     if userDiscord[0] != "0":
         userName = list(userDB.getUserNameById(conn,userDiscord[0]))
@@ -195,12 +191,9 @@ async def player(ctx, *playerName):
 @commands.cooldown(1, 30*60, commands.BucketType.user)
 async def fut(ctx):
     userCrix = int(userDB.getCrix(conn,ctx.author.id))
-    print(userCrix)
     nbCrix = random.randint(30,120)
-    print(nbCrix)
     addCrix = userCrix + nbCrix
     str(userDB.setCrix(conn,addCrix,ctx.author.id))
-    print(int(userDB.getCrix(conn,ctx.author.id)))
 
     if nbCrix > 80:
         em = discord.Embed(title=f"WOW, you won {nbCrix} crix",description=" ", color=discord.Color.green())
@@ -209,6 +202,7 @@ async def fut(ctx):
         em = discord.Embed(title=f"You won {nbCrix} crix",description=" ", color=discord.Color.green())
     await ctx.send(embed=em)
     
+
 
 
 
