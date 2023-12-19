@@ -202,13 +202,17 @@ async def fut(ctx):
         em = discord.Embed(title=f"You won {nbCrix} crix",description=" ", color=discord.Color.green())
     await ctx.send(embed=em)
     
-
-
+@client.command(name="crix")
+async def crix(ctx):
+    discordId = ctx.author.id
+    nbCrix = str(userDB.getCrix(conn,discordId))
+    em = discord.Embed(title=f"You have {nbCrix} crix",description=" ", color=discord.Color.purple())
+    await ctx.send(embed=em)
 
 
 # Event
 @client.event
-async def on_ready(): # Send message in terminal
+async def on_ready(): # Send message isn terminal
     print("Bot ready!")
 
 @client.event
