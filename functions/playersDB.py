@@ -59,7 +59,7 @@ def setUserId(conn,playerId,userId):
     cur = conn.cursor()
     cur.execute(sql,(userId,playerId,))
     result = cur.fetchone
-    conn.commit
+    conn.commit()
     return cur.lastrowid
 
 def getValueCrix(conn,playerName):

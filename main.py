@@ -169,8 +169,6 @@ async def player(ctx, *playerName):
     if userDiscord[0] != "0":
         userName = list(userDB.getUserNameById(conn,userDiscord[0]))
 
-
-
     for player in players:
         photoLink = "https://cdn.sofifa.net/players/" + str(player[0])[:3] + "/" + str(player[0])[3:] + "/23_240.png"
         valCrix = float(player[10]) / 100000
@@ -183,6 +181,7 @@ async def player(ctx, *playerName):
         )
         embed.add_field(name=userName[0],value="",inline=True)
         embed.add_field(name="FIFA " + player[2],value="",inline=True)
+        embed.add_field(name=player[6],value="",inline=True)
         embed.set_image(url=photoLink)
         embed.set_footer(text=str(round(valCrix)) + " ◊")
         await ctx.channel.send(embed=embed)
@@ -212,18 +211,21 @@ async def crix(ctx):
 @client.command(name="giveP")
 async def giveP(ctx,userName : discord.Member, *playerName):
     name = ' '.join(playerName)
-    userId = playerDB.getUserIdByPlayerName(conn, name)
-    userId = userId[0]
-    print(str(userId))
+    discordId = userName.id
     playerId = str(playerDB.getPlayerIdByName(conn, name))
-    print(playerId)
-    playerDB.setUserId(conn,playerId,str(userId))
-    
+    userId = playerDB.getUserIdByPlayerId(conn, playerId)
+    userId = userId[0]
+    if userId != ctx.author.id:
+        em = discord.Embed(title=f"You don't have {name} in your team",description=" ", color=discord.Color.red())
+        await ctx.send(embed=em)
+    playerDB.setUserId(conn,playerId,str(discordId))
+    em = discord.Embed(title=f"You gave {name}",description=f"The player is now in {userName} team", color=discord.Color.green())
+    await ctx.send(embed=em)
 
 
 # Event
 @client.event
-async def on_ready(): # Send message isn terminal
+async def on_ready(): # Send message in terminal
     print("Bot ready!")
 
 @client.event
@@ -245,7 +247,5 @@ async def fut_error(ctx,error):
     if isinstance(error,commands.CommandOnCooldown):
         em = discord.Embed(title=f"You can't do more than 1 command every 30min",description=f"Try again in {error.retry_after:.2f}s.", color=discord.Color.red())
         await ctx.send(embed=em)
-
-
 
 client.run(config['token'])
