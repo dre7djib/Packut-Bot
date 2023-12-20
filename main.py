@@ -222,6 +222,16 @@ async def giveP(ctx,userName : discord.Member, *playerName):
     em = discord.Embed(title=f"You gave {name}",description=f"The player is now in {userName} team", color=discord.Color.green())
     await ctx.send(embed=em)
 
+@client.command(name="giveC")
+async def giveC(ctx,userName : discord.Member, crix ):
+    discordId = userName.id
+    userCrix = userDB.getCrix(conn,ctx.author.id)
+    userCrix -= crix
+    userDB.setCrix(conn,userCrix,discordId)
+    em = discord.Embed(title=f"You gave {crix} to {userName}",description=f"", color=discord.Color.green())
+    await ctx.send(embed=em)
+
+
 
 # Event
 @client.event
