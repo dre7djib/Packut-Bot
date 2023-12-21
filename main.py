@@ -186,7 +186,7 @@ async def player(ctx, *playerName):
         embed.set_footer(text=str(round(valCrix)) + " ◊")
         await ctx.channel.send(embed=embed)
 
-@client.command(name="fut")
+@client.command(name="fut") #Every 30min the user can use this command to win crix
 @commands.cooldown(1, 30*60, commands.BucketType.user)
 async def fut(ctx):
     userCrix = int(userDB.getCrix(conn,ctx.author.id))
@@ -201,14 +201,14 @@ async def fut(ctx):
         em = discord.Embed(title=f"You won {nbCrix} crix",description=" ", color=discord.Color.green())
     await ctx.send(embed=em)
     
-@client.command(name="crix")
+@client.command(name="crix") # Show how much crix the user have
 async def crix(ctx):
     discordId = ctx.author.id
     nbCrix = str(userDB.getCrix(conn,discordId))
     em = discord.Embed(title=f"You have {nbCrix} crix",description=" ", color=discord.Color.purple())
     await ctx.send(embed=em)
 
-@client.command(name="giveP")
+@client.command(name="giveP") # Give a Player to another user
 async def giveP(ctx,userName : discord.Member, *playerName):
     name = ' '.join(playerName)
     discordId = userName.id
@@ -222,7 +222,7 @@ async def giveP(ctx,userName : discord.Member, *playerName):
     em = discord.Embed(title=f"You gave {name}",description=f"The player is now in {userName} team", color=discord.Color.green())
     await ctx.send(embed=em)
 
-@client.command(name="giveC")
+@client.command(name="giveC") # Give crix to another user
 async def giveC(ctx,userName : discord.Member, crix ):
     discordId = userName.id
     giverCrix = userDB.getCrix(conn,ctx.author.id)
