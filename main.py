@@ -225,10 +225,13 @@ async def giveP(ctx,userName : discord.Member, *playerName):
 @client.command(name="giveC")
 async def giveC(ctx,userName : discord.Member, crix ):
     discordId = userName.id
-    userCrix = userDB.getCrix(conn,ctx.author.id)
-    userCrix -= crix
-    userDB.setCrix(conn,userCrix,discordId)
-    em = discord.Embed(title=f"You gave {crix} to {userName}",description=f"", color=discord.Color.green())
+    giverCrix = userDB.getCrix(conn,ctx.author.id)
+    userGetCrix = userDB.getCrix(conn,discordId)
+    giverCrix -= int(crix)
+    userGetCrix += int(crix)
+    userDB.setCrix(conn,giverCrix,ctx.author.id)
+    userDB.setCrix(conn,userGetCrix,discordId)
+    em = discord.Embed(title=f"{ctx.author.name} gave {crix} ◊ to {userName}",description=f"", color=discord.Color.purple())
     await ctx.send(embed=em)
 
 
