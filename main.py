@@ -227,6 +227,10 @@ async def giveC(ctx,userName : discord.Member, crix ):
     discordId = userName.id
     giverCrix = userDB.getCrix(conn,ctx.author.id)
     userGetCrix = userDB.getCrix(conn,discordId)
+    if giverCrix < int(crix):
+        em = discord.Embed(title=f"You can't give {crix} ◊ to {userName} because you have less than {crix} crix",description=f"", color=discord.Color.red())
+        await ctx.send(embed=em)
+        return
     giverCrix -= int(crix)
     userGetCrix += int(crix)
     userDB.setCrix(conn,giverCrix,ctx.author.id)
