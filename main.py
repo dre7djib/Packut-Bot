@@ -171,6 +171,7 @@ async def player(ctx, *playerName):
     if userDiscord[0] != "0":
         userName = list(userDB.getUserNameById(conn,userDiscord[0]))
 
+    menu = ViewMenu(ctx, menu_type=ViewMenu.TypeEmbed)
     for player in players:
         photoLink = "https://cdn.sofifa.net/players/" + str(player[0])[:3] + "/" + str(player[0])[3:] + "/23_240.png"
         valCrix = float(player[10]) / 100000
@@ -186,7 +187,12 @@ async def player(ctx, *playerName):
         embed.add_field(name=player[6],value="",inline=True)
         embed.set_image(url=photoLink)
         embed.set_footer(text=str(round(valCrix)) + " ◊")
-        await ctx.channel.send(embed=embed)
+        menu.add_page(embed)
+    
+    menu.add_button(ViewButton.back())
+    menu.add_button(ViewButton.next())
+
+    await menu.start()
 
 @client.command(name="fut") #Every 30min the user can use this command to win crix
 @commands.cooldown(1, 30*60, commands.BucketType.user)
@@ -239,22 +245,6 @@ async def giveC(ctx,userName : discord.Member, crix ):
     userDB.setCrix(conn,userGetCrix,discordId)
     em = discord.Embed(title=f"{ctx.author.name} gave {crix} ◊ to {userName}",description=f"", color=discord.Color.purple())
     await ctx.send(embed=em)
-
-@client.command(name="test")
-async def test(ctx):
-    menu = ViewMenu(ctx, menu_type=ViewMenu.TypeEmbed)
-    
-    for member in ctx.guild.members:
-        if member.avatar:
-            embed = discord.Embed(description=f'Joined {member.joined_at.strftime("%b. %d, %Y")}')
-            embed.set_author(name=member.name, icon_url=member.avatar.url)
-            menu.add_page(embed)
-    
-    menu.add_button(ViewButton.back())
-    menu.add_button(ViewButton.next())
-    menu.add_button(ViewButton.end_session())
-    
-    await menu.start()
 
 # Event
 @client.event
