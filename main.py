@@ -7,9 +7,11 @@ import functions.userDB as userDB
 import functions.db as db
 import functions.playersViewDB as playersViewDB
 from discord.ext.commands import cooldown, BucketType
+from discord.ext import commands
+from reactionmenu import ViewMenu, ViewButton
 from read_csv import readcsv
 from read_csv import insertCSV
-from discord.ext import commands
+
 
 # Import Token and Prefix
 with open("config.json", "r") as read_file:
@@ -238,7 +240,21 @@ async def giveC(ctx,userName : discord.Member, crix ):
     em = discord.Embed(title=f"{ctx.author.name} gave {crix} ◊ to {userName}",description=f"", color=discord.Color.purple())
     await ctx.send(embed=em)
 
-
+@client.command(name="test")
+async def test(ctx):
+    menu = ViewMenu(ctx, menu_type=ViewMenu.TypeEmbed)
+    
+    for member in ctx.guild.members:
+        if member.avatar:
+            embed = discord.Embed(description=f'Joined {member.joined_at.strftime("%b. %d, %Y")}')
+            embed.set_author(name=member.name, icon_url=member.avatar.url)
+            menu.add_page(embed)
+    
+    menu.add_button(ViewButton.back())
+    menu.add_button(ViewButton.next())
+    menu.add_button(ViewButton.end_session())
+    
+    await menu.start()
 
 # Event
 @client.event
