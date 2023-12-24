@@ -75,3 +75,10 @@ def removePlayer(conn,playerID):
     cur.execute(sql,(playerID,))
     conn.commit()
     return
+
+def getCountPlayers(conn,userId):
+    sql = ''' SELECT Count(playerID) FROM players WHERE userId = ? '''
+    cur = conn.cursor()
+    cur.execute(sql,(userId,))
+    result = cur.fetchone()
+    return result[0]

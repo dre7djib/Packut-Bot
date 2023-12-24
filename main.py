@@ -65,9 +65,6 @@ async def on_guild_join(guild):  # When Bot Added, it create a category with 2 t
         channel = await category.create_text_channel(channelPlay)
 
 
-
-
-
 # Command
 @client.command(name="delete") # Temp Command to delete message in channel
 async def clear(ctx, amount=30):
@@ -135,15 +132,28 @@ async def team(ctx,  userName : discord.Member):
     discordId = userName.id
     players = playerDB.getAllPlayers(conn,discordId)
     userName = str(userName)
+    countPlayers = int(playerDB.getCountPlayers(conn,discordId))
+    menu = ViewMenu(ctx, menu_type=ViewMenu.TypeEmbed)
     
-    embed = discord.Embed(
-    title = "Team of "+ userName,
-    color = discord.Color.purple()
-    )
-    for name in players:
-        embed.add_field(name=name, value='')
-    embed.set_thumbnail(url=ctx.author.avatar)
-    await ctx.channel.send(embed=embed)
+    nbPage = (countPlayers - 1) // 10 + 1
+    print(nbPage)
+    count = 0
+    temp = 0
+    for i in range(nbPage):
+        embed = discord.Embed(title = "Team of "+ userName, color = discord.Color.purple())
+        for player in players[temp:temp + 10]:
+            embed.add_field(name=player, value='')
+        
+        menu.add_page(embed)
+        temp += 10
+
+    menu.add_button(ViewButton.back())
+    menu.add_button(ViewButton.next())
+
+    await menu.start()
+
+
+
     
 @client.command(name="sell") # Sell a player to another user
 async def sell(ctx, userName : discord.Member, *playerName):
