@@ -69,6 +69,13 @@ def getValueCrix(conn,playerName):
     result = cur.fetchone()
     return result[0]
 
+def getPosition(conn,playerName):
+    sql = ''' SELECT position FROM players WHERE playerName = ? '''
+    cur = conn.cursor()
+    cur.execute(sql,(playerName,))
+    result = cur.fetchone()
+    return result[0]
+
 def removePlayer(conn,playerID):
     sql = ''' DELETE FROM players WHERE playerID = ? '''
     cur = conn.cursor()

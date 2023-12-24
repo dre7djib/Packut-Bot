@@ -141,13 +141,17 @@ async def team(ctx,  userName : discord.Member):
     for i in range(nbPage):
         embed = discord.Embed(title = "Team of "+ userName, color = discord.Color.purple())
         for player in players[temp:temp + 10]:
-            embed.add_field(name=player, value='', inline=False)
+            vCrix = playerDB.getValueCrix(conn,player)
+            position = playerDB.getPosition(conn,player)
+            embed.add_field(name=f"{player:<50} {vCrix} ◊ {position:>50}", value='', inline=False)
         
         menu.add_page(embed)
         temp += 10
-
+    menu.add_button(ViewButton.go_to_first_page())
     menu.add_button(ViewButton.back())
     menu.add_button(ViewButton.next())
+    menu.add_button(ViewButton.go_to_last_page())
+    menu.add_button(ViewButton.go_to_page())
 
     await menu.start()
 
