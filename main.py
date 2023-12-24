@@ -136,13 +136,12 @@ async def team(ctx,  userName : discord.Member):
     menu = ViewMenu(ctx, menu_type=ViewMenu.TypeEmbed)
     
     nbPage = (countPlayers - 1) // 10 + 1
-    print(nbPage)
     count = 0
     temp = 0
     for i in range(nbPage):
         embed = discord.Embed(title = "Team of "+ userName, color = discord.Color.purple())
         for player in players[temp:temp + 10]:
-            embed.add_field(name=player, value='')
+            embed.add_field(name=player, value='', inline=False)
         
         menu.add_page(embed)
         temp += 10
@@ -151,8 +150,6 @@ async def team(ctx,  userName : discord.Member):
     menu.add_button(ViewButton.next())
 
     await menu.start()
-
-
 
     
 @client.command(name="sell") # Sell a player to another user
