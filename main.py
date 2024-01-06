@@ -1,5 +1,7 @@
 import discord
 import json
+import sqlite3
+import os
 import csv
 import random
 import functions.playersDB as playerDB
@@ -21,7 +23,16 @@ file = open("archive/male_players.csv", "r")
 m_players = list(csv.reader(file, delimiter=","))
 file.close()
 
-conn = db.create_connection("data.db") # Create connection between db and code
+if os.path.exists("data.db"):
+    conn = db.create_connection("data.db") # Create connection between db and code
+else:
+    db.createDb()
+    conn = db.create_connection("data.db")
+    insertCSV(conn,"archive/male_players.csv")
+
+
+
+
 
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix=config['prefix'], intents = intents, help_command=None)
@@ -30,7 +41,6 @@ client = commands.Bot(command_prefix=config['prefix'], intents = intents, help_c
 # Bot
 @client.event
 async def on_guild_join(guild):  # When Bot Added, it create a category with 2 text channel for the Bot
-    insertCSV(conn,"archive/male_players.csv")
 
     channelRules = "Rules and Commands" # Channel Rules 
     channelPlay = "Play FutPack" # Channel Play
@@ -155,14 +165,13 @@ async def team(ctx,  userName : discord.Member):
 
     await menu.start()
 
-    
 @client.command(name="sell") # Sell a player to another user
-async def sell(ctx, userName : discord.Member, *playerName):
-    discordId = userName.id
+async def sell(ctx, *playerName):
+    discordId = ctx.author.id
     name = ' '.join(playerName)
     userId = playerDB.getUserIdByPlayerName(conn, name)
     if userId == False or discordId != userId[0]:
-        em = discord.Embed(title="You can't sell that player because it's not yours", color=discord.Color.red())
+        em = discord.Embed(title="You can't sell this player because it's not yours", color=discord.Color.red())
         await ctx.send(embed=em)
     else:
         valueCrix = playerDB.getValueCrix(conn,name)
@@ -199,11 +208,13 @@ async def player(ctx, *playerName):
         embed.set_image(url=photoLink)
         embed.set_footer(text=str(round(valCrix)) + " ◊")
         menu.add_page(embed)
-    
-    menu.add_button(ViewButton.back())
-    menu.add_button(ViewButton.next())
 
-    await menu.start()
+    if len(players) > 1:
+        menu.add_button(ViewButton.back())
+        menu.add_button(ViewButton.next())
+        await menu.start()
+    else:
+        await ctx.send(embed = embed)
 
 @client.command(name="fut") #Every 30min the user can use this command to win crix
 @commands.cooldown(1, 30*60, commands.BucketType.user)
@@ -257,6 +268,7 @@ async def giveC(ctx,userName : discord.Member, crix ):
     em = discord.Embed(title=f"{ctx.author.name} gave {crix} ◊ to {userName}",description=f"", color=discord.Color.purple())
     await ctx.send(embed=em)
 
+
 # Event
 @client.event
 async def on_ready(): # Send message in terminal
@@ -266,7 +278,6 @@ async def on_ready(): # Send message in terminal
 async def on_member_join(member):  # Welcome User in the Server
     general_channel = client.get_channel(1167794216248823818)
     await general_channel.send("Bienvenue sur le serveur ! "+ member.name)
-
 
 
 # Error
