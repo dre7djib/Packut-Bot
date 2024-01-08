@@ -63,7 +63,10 @@ async def on_guild_join(guild):  # When Bot Added, it create a category with 2 t
         embed.add_field(name="&sell", value="Command to sell one of your player. In exchange you gain the value of the player you sold", inline=False)
         embed.add_field(name="&player", value="Command to see the card of a player with his value, photo, and description", inline=False)
         embed.add_field(name="&giveP", value="Command to give to another player one of your card", inline=False)
-        embed.add_field(name="&giveC", value="Command to give to another player a certain amount of your crix", inline=True)
+        embed.add_field(name="&giveC", value="Command to give to another player a certain amount of your crix", inline=False)
+        embed.add_field(name="&lastHistory", value="Command to see your last command", inline=False)
+        embed.add_field(name="&clearHistory", value="Command to clear your history", inline=False)
+        embed.add_field(name="&history", value="Command to see your history", inline=False)
         await channel.send(embed=embed)
         
         await channel.set_permissions(client.user, send_messages=True, read_messages=True)
@@ -288,13 +291,13 @@ async def on_member_join(member):  # Welcome User in the Server
 
 # Error
 @pack.error
-async def pack_error(ctx, error): # Cooldown for Command pack
+async def pack_error(ctx, error): # Cooldown 30s for Command pack
     if isinstance(error, commands.CommandOnCooldown):
         em = discord.Embed(title=f"You have done too much command",description=f"Try again in {error.retry_after:.2f}s.", color=discord.Color.red())
         await ctx.send(embed=em)
 
 @fut.error
-async def fut_error(ctx,error):
+async def fut_error(ctx,error): # Cooldown 30min for Command fut
     if isinstance(error,commands.CommandOnCooldown):
         em = discord.Embed(title=f"You can't do more than 1 command every 30min",description=f"Try again in {error.retry_after:.2f}s.", color=discord.Color.red())
         await ctx.send(embed=em)
