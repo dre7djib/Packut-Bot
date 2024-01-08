@@ -42,8 +42,7 @@ class CommandHistory(commands.Cog):
             self.history.insert(userId, userCommandHistory)
 
     @commands.Cog.listener()
-    async def on_command_completion(self, ctx):
-        """Sauvegarde la commande dans l'historique"""
+    async def on_command_completion(self, ctx): 
         if ctx.author.bot or ctx.command.name == "history":
             return
 
@@ -57,8 +56,7 @@ class CommandHistory(commands.Cog):
         self.saveUserCommandHistory(user_id, user_history)
 
     @commands.command(name = "lastHistory")
-    async def lastCommand(self, ctx):
-        """Displays the last command entered by the user"""
+    async def lastCommand(self, ctx): #Show the last command of the user
         if not await self.bot.checkAccess(ctx):
             return
         userId = str(ctx.author.id)
@@ -71,8 +69,7 @@ class CommandHistory(commands.Cog):
             await ctx.send(f"{ctx.author}, you have no command history")
 
     @commands.command(name= "clearHistory")
-    async def clearCommandHistory(self, ctx):
-        """Deletes the user's command history"""
+    async def clearCommandHistory(self, ctx): # Delete the user History
         if not await self.bot.checkAccess(ctx):
             return
 
@@ -80,15 +77,14 @@ class CommandHistory(commands.Cog):
         self.history.remove(userId)
         self.saveUserCommandHistory(userId, [])
 
-        await ctx.send(f"{ctx.author.mention}, your command history has been cleared!")
+        await ctx.send(f"{ctx.author.mention}, your history is now cleared!")
 
     @commands.command(name="history")
-    async def _commandHistory(self, ctx):
-        """Displays the user's command history"""
+    async def _commandHistory(self, ctx): # Show the user history
         userId = str(ctx.author.id)
         userCommandHistory = self.history.get(userId)
         if userCommandHistory is None or len(userCommandHistory) == 0:
-            await ctx.send(f"{ctx.author.mention}, there is no command history for you.")
+            await ctx.send(f"{ctx.author.mention}, You have done zero command")
         else:
             commandHistoryStr = "\n".join(userCommandHistory)
             await ctx.send(f"Command history for {ctx.author.mention}:\n```\n{commandHistoryStr}\n```")

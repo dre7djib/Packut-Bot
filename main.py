@@ -13,6 +13,7 @@ from discord.ext import commands
 from reactionmenu import ViewMenu, ViewButton
 from read_csv import readcsv
 from read_csv import insertCSV
+from assets.history import CommandHistory
 
 
 # Import Token and Prefix
@@ -31,11 +32,9 @@ else:
     insertCSV(conn,"archive/male_players.csv")
 
 
-
-
-
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix=config['prefix'], intents = intents, help_command=None)
+
 
 
 # Bot
@@ -136,6 +135,7 @@ async def crix(ctx):
         await ctx.channel.send("You already start playing")
     else:
         userDB.createUser(conn, discordName, discordId)
+        await ctx.channel.send("Welcome in FutPack!!")
 
 @client.command(name="team") # Show player of a user
 async def team(ctx,  userName : discord.Member):
@@ -269,9 +269,15 @@ async def giveC(ctx,userName : discord.Member, crix ):
     await ctx.send(embed=em)
 
 
+
+
+
 # Event
 @client.event
-async def on_ready(): # Send message in terminal
+async def on_ready():
+    for filename in os.listdir("./assets"):
+        if filename.endswith(".py"):
+            await client.load_extension(f"assets.{filename[:-3]}")
     print("Bot ready!")
 
 @client.event
